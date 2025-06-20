@@ -3,6 +3,11 @@ const axios = require("axios");
 const GAS_URL =
   "https://script.google.com/macros/s/AKfycbz9LIukypbkTyUCsYU0vz0LeGWMdAGhrG38jiloQERsPbzXReM8VjaUNdd5FrsAxtE0/exec";
 
+const cors = require("cors")({
+  origin: "*",
+  methods: ["GET", "POST", "OPTIONS"],
+});
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
