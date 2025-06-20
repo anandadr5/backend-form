@@ -8,19 +8,24 @@ const cors = require("cors")({
   methods: ["GET", "POST", "OPTIONS"],
 });
 
-module.exports = async (req, res) => {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
+module.exports = (req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
 
-  try {
-    const response = await axios.post(GAS_URL, req.body, {
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const response = await axios.post(GAS_URL, req.body, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-    res.status(200).json(response.data);
-  } catch (error) {
-    console.error("Error submit ke GAS:", error.message);
-    res.status(500).json({ status: "error", message: "Gagal submit ke GAS" });
-  }
+      res.status(200).json(response.data);
+    } catch (error) {
+      console.error("Error submit ke GAS:", error.message);
+      res.status(500).json({
+        status: "error",
+        message: "Gagal submit ke GAS",
+      });
+    }
+  });
 };
