@@ -4,12 +4,16 @@ const GAS_URL =
   "https://script.google.com/macros/s/AKfycbydTEquxczZEBtnYEaKBxnvdNH_mPPBjTILhG8xWNKxXMpVqLzxtFuz-xdhzbCoRYwRiQ/exec";
 
 const cors = require("cors")({
-  origin: "*",
-  methods: ["GET", "POST", "OPTIONS"],
+  origin: "https://frontend-form-virid.vercel.app",
+  methods: ["GET", "OPTIONS"],
 });
 
 module.exports = (req, res) => {
   cors(req, res, async () => {
+    if (req.method === "OPTIONS") {
+      return res.status(200).end();
+    }
+
     if (req.method !== "GET") {
       return res.status(405).json({ error: "Method Not Allowed" });
     }
@@ -22,6 +26,10 @@ module.exports = (req, res) => {
       );
 
       const response = await axios.get(url.toString());
+      res.setHeader(
+        "Access-Control-Allow-Origin",
+        "https://frontend-form-virid.vercel.app"
+      );
       res.status(200).json(response.data);
     } catch (error) {
       console.error("Error get-data dari GAS:", error.message);
