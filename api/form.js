@@ -1,6 +1,6 @@
 const axios = require("axios");
 const cors = require("cors")({
-  origin: "https://frontend-form-virid.vercel.app", // Ganti kalau frontend beda
+  origin: "https://frontend-form-virid.vercel.app",
   methods: ["GET", "POST", "OPTIONS"],
 });
 
@@ -18,6 +18,7 @@ const GAS_URLS = {
   h18: "https://script.google.com/macros/s/AKfycbznVBfvU8GCMzMaf-bL6ulV0KatsrJVnV6l6RmFveWEBYoPggh1JiW2FRsYsi8m1G9W/exec",
   h22: "https://script.google.com/macros/s/AKfycbw8lJk9jAR6551V-uRNwdGna6fZhQrOomy5Yq4HHfVA7Q3szokq7eLYBOZQOORBdNUR4w/exec",
   h25: "https://script.google.com/macros/s/AKfycbwDtPtj45feH8-aZJYXQTgMRyVe3RC6BQSLIN_nhK-7jy6ev6ulmTyReujob_9Hr_J9gg/exec",
+  h32: "https://script.google.com/macros/s/AKfycbzgiF6tC7YZxB7yrx_RLyjsaBuL2X672JZBqMbXRFfgSjHS9Z80mvmVi8QarltQqa19sQ/exec",
 };
 
 module.exports = (req, res) => {
