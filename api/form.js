@@ -13,6 +13,7 @@ const GAS_URLS = {
   h8: "https://script.google.com/macros/s/AKfycbzEBsmlkDVjWrvNAYyvrD9sl2Xz64XaJN-amEzgLCZKBBT41T1aznVD-GlitfMrzO0k/exec",
   h10: "https://script.google.com/macros/s/AKfycbxIuS4ka9kwj9PApSwbro4fnji-54yf8maZo5hqzBidYSRaWp494NHXv6oll2Evl7DN/exec",
   h14: "https://script.google.com/macros/s/AKfycbydTEquxczZEBtnYEaKBxnvdNH_mPPBjTILhG8xWNKxXMpVqLzxtFuz-xdhzbCoRYwRiQ/exec",
+  h17: "https://script.google.com/macros/s/AKfycbyYORrDcUXQ7pyS7rME-o8Mq23knu26_53OHMgbs8PKe7Rz6sg2tMj4fsQlufhSd3i1Rw/exec",
 };
 
 module.exports = (req, res) => {
