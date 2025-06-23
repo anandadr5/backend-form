@@ -4,7 +4,7 @@ const GAS_URL =
   "https://script.google.com/macros/s/AKfycbxIuS4ka9kwj9PApSwbro4fnji-54yf8maZo5hqzBidYSRaWp494NHXv6oll2Evl7DN/exec";
 
 const cors = require("cors")({
-  origin: "*",
+  origin: "https://frontend-form-virid.vercel.app",
   methods: ["GET", "POST", "OPTIONS"],
 });
 
