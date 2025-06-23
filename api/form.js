@@ -17,6 +17,7 @@ const GAS_URLS = {
   h17: "https://script.google.com/macros/s/AKfycbyYORrDcUXQ7pyS7rME-o8Mq23knu26_53OHMgbs8PKe7Rz6sg2tMj4fsQlufhSd3i1Rw/exec",
   h18: "https://script.google.com/macros/s/AKfycbznVBfvU8GCMzMaf-bL6ulV0KatsrJVnV6l6RmFveWEBYoPggh1JiW2FRsYsi8m1G9W/exec",
   h22: "https://script.google.com/macros/s/AKfycbw8lJk9jAR6551V-uRNwdGna6fZhQrOomy5Yq4HHfVA7Q3szokq7eLYBOZQOORBdNUR4w/exec",
+  h25: "https://script.google.com/macros/s/AKfycbwDtPtj45feH8-aZJYXQTgMRyVe3RC6BQSLIN_nhK-7jy6ev6ulmTyReujob_9Hr_J9gg/exec",
 };
 
 module.exports = (req, res) => {
