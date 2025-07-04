@@ -14,11 +14,16 @@ const GAS_URLS = {
   h10: "https://script.google.com/macros/s/AKfycbxIuS4ka9kwj9PApSwbro4fnji-54yf8maZo5hqzBidYSRaWp494NHXv6oll2Evl7DN/exec",
   h12: "https://script.google.com/macros/s/AKfycbw-NdGFDa4o5crGJKd_qqG3iCBJo4jqJSfzsdw06EIgV-8wIYO8XdtXFKMtjh8MLpRl/exec",
   h14: "https://script.google.com/macros/s/AKfycbydTEquxczZEBtnYEaKBxnvdNH_mPPBjTILhG8xWNKxXMpVqLzxtFuz-xdhzbCoRYwRiQ/exec",
+  h16: "https://script.google.com/macros/s/AKfycbx_kNNLG0qBeUP9G_q_q7IYeoCPQKkwUzuiClbjVH-9h8bk1EFpzhvXFof9qyXf__aYnA/exec",
   h17: "https://script.google.com/macros/s/AKfycbyYORrDcUXQ7pyS7rME-o8Mq23knu26_53OHMgbs8PKe7Rz6sg2tMj4fsQlufhSd3i1Rw/exec",
   h18: "https://script.google.com/macros/s/AKfycbznVBfvU8GCMzMaf-bL6ulV0KatsrJVnV6l6RmFveWEBYoPggh1JiW2FRsYsi8m1G9W/exec",
   h22: "https://script.google.com/macros/s/AKfycbw8lJk9jAR6551V-uRNwdGna6fZhQrOomy5Yq4HHfVA7Q3szokq7eLYBOZQOORBdNUR4w/exec",
+  h23: "https://script.google.com/macros/s/AKfycbwTlbSm6cQWlxpMAi041iKLpE856_fEwZCQa-3jlmnh5FbMUDBTfeTP-TcEpu5TKxi5/exec",
   h25: "https://script.google.com/macros/s/AKfycbwDtPtj45feH8-aZJYXQTgMRyVe3RC6BQSLIN_nhK-7jy6ev6ulmTyReujob_9Hr_J9gg/exec",
+  h28: "https://script.google.com/macros/s/AKfycbxmtLtyetWojCNW3x6ee4MNUvhwNlslG5fREaCfdQI-P1m6-nvJRmk1pEtgc7btor2z/exec",
   h32: "https://script.google.com/macros/s/AKfycbzgiF6tC7YZxB7yrx_RLyjsaBuL2X672JZBqMbXRFfgSjHS9Z80mvmVi8QarltQqa19sQ/exec",
+  h33: "https://script.google.com/macros/s/AKfycbxExV0EgMBym4rrPhhhyGNFsqOpqQDLkybjlGem4_CliHCWwp5Rwb_7ObwmS7sVO6QG/exec",
+  h41: "https://script.google.com/macros/s/AKfycbzNik8k8Uo6Cbs2LkSZ-7_kyQYVZEDcIZlf-LV5C7sCuLWjd-LIRjqJd0Mg9fQQ-Vn1eg/exec",
 };
 
 module.exports = (req, res) => {
