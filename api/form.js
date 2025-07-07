@@ -7,7 +7,7 @@ const cors = require("cors")({
 const GAS_URLS = {
   "input-pic":
     "https://script.google.com/macros/s/AKfycbz9LIukypbkTyUCsYU0vz0LeGWMdAGhrG38jiloQERsPbzXReM8VjaUNdd5FrsAxtE0/exec",
-  h2: "https://script.google.com/macros/s/AKfycbypYgQepRIARK-m2EDjEke4XZJ1aGFdYPlSSFK60JAf8UeB0xwkdTF2U4IpTlVc8YSOtA/exec",
+  h2: "https://script.google.com/macros/s/AKfycbyQqxr5WuSFqeeZiR3y-PJoroUQ8fN6baEzS5lmq_c3Tf5Xj94hMXJu0EtQcg96aXxp2A/exec",
   h5: "https://script.google.com/macros/s/AKfycby_37vO4R95aq3ScRUaZmVqnjOKd7lxmwMzWxAMhvLiXSODtG0ZKQCgBJVG9Y0F09ck/exec",
   h7: "https://script.google.com/macros/s/AKfycby4NBQE2oQXijsMQhG-uET-HunBeqKPS-aiuwT7kkcT9O72LA-5o8B8zJ_jF3XXNKaW/exec",
   h8: "https://script.google.com/macros/s/AKfycbzEBsmlkDVjWrvNAYyvrD9sl2Xz64XaJN-amEzgLCZKBBT41T1aznVD-GlitfMrzO0k/exec",
@@ -24,6 +24,8 @@ const GAS_URLS = {
   h32: "https://script.google.com/macros/s/AKfycbzgiF6tC7YZxB7yrx_RLyjsaBuL2X672JZBqMbXRFfgSjHS9Z80mvmVi8QarltQqa19sQ/exec",
   h33: "https://script.google.com/macros/s/AKfycbxExV0EgMBym4rrPhhhyGNFsqOpqQDLkybjlGem4_CliHCWwp5Rwb_7ObwmS7sVO6QG/exec",
   h41: "https://script.google.com/macros/s/AKfycbzNik8k8Uo6Cbs2LkSZ-7_kyQYVZEDcIZlf-LV5C7sCuLWjd-LIRjqJd0Mg9fQQ-Vn1eg/exec",
+  serah_terima:
+    "https://script.google.com/macros/s/AKfycbwUqxyHFkaoZZnmyVCEwUwEXStEwQr7Dl9wxxNhhe-7QzWRJENww7ZPpe6cq7fid4H82Q/exec",
 };
 
 module.exports = (req, res) => {
