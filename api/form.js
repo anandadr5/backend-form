@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { sendEmail } = require("../lib/emailService");
 const cors = require("cors")({
   origin: "https://frontend-form-virid.vercel.app",
   methods: ["GET", "POST", "OPTIONS"],
