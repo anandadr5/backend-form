@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { sendEmail } = require("../lib/emailService");
 const cors = require("cors")({
   origin: "https://frontend-form-virid.vercel.app",
   methods: ["GET", "POST", "OPTIONS"],
@@ -43,7 +42,6 @@ module.exports = (req, res) => {
     try {
       if (req.method === "GET") {
         const url = new URL(GAS_URL);
-        // Tambahkan semua query params, kecuali "form"
         Object.entries(req.query).forEach(([key, value]) => {
           if (key !== "form") url.searchParams.append(key, value);
         });
@@ -52,7 +50,10 @@ module.exports = (req, res) => {
       }
 
       if (req.method === "POST") {
-        const response = await axios.post(GAS_URL, req.body, {
+        const postData = { ...req.body };
+        delete postData.form;
+
+        const response = await axios.post(GAS_URL, postData, {
           headers: { "Content-Type": "application/json" },
         });
         return res.status(200).json(response.data);
@@ -60,7 +61,7 @@ module.exports = (req, res) => {
 
       return res.status(405).json({ error: "Method Not Allowed" });
     } catch (error) {
-      console.error("GAS error:", {
+      console.error("GAS Proxy error:", {
         message: error.message,
         response: error.response?.data,
         status: error.response?.status,
