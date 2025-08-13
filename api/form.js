@@ -10,6 +10,8 @@ const cors = require("cors")({
 const GAS_URLS = {
   "input-pic":
     "https://script.google.com/macros/s/AKfycbz9LIukypbkTyUCsYU0vz0LeGWMdAGhrG38jiloQERsPbzXReM8VjaUNdd5FrsAxtE0/exec",
+  login:
+    "https://script.google.com/macros/s/AKfycbzsfdnR7O3-GHanO5t08AqtVB7ek7LVivEVbozHivF9GMQs9xCLhG1t9YXRQBLfzmtv/exec",
   h2: "https://script.google.com/macros/s/AKfycbyQqxr5WuSFqeeZiR3y-PJoroUQ8fN6baEzS5lmq_c3Tf5Xj94hMXJu0EtQcg96aXxp2A/exec",
   h5: "https://script.google.com/macros/s/AKfycby_37vO4R95aq3ScRUaZmVqnjOKd7lxmwMzWxAMhvLiXSODtG0ZKQCgBJVG9Y0F09ck/exec",
   h7: "https://script.google.com/macros/s/AKfycby4NBQE2oQXijsMQhG-uET-HunBeqKPS-aiuwT7kkcT9O72LA-5o8B8zJ_jF3XXNKaW/exec",
