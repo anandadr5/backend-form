@@ -7,9 +7,9 @@ const sendEmailHandler = require("./api/send-email.js");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(express.json({ limit: "15mb" }));
+app.use(express.json({ limit: "45mb" }));
 
-app.use(express.urlencoded({ limit: "15mb", extended: true }));
+app.use(express.urlencoded({ limit: "45mb", extended: true }));
 
 app.use(
   cors({
