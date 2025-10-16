@@ -31,7 +31,7 @@ const GAS_URLS = {
   h41: "https://script.google.com/macros/s/AKfycbwgIbxOWzUeVwMnzqUsrggqTivg-_mtUXEnNYVKs8aIRlmcJo4JZz5dPlXDYfn4Fbib/exec",
   serah_terima:
     "https://script.google.com/macros/s/AKfycbzYIuPoVoaD6HT7GjmGI2flSKzepirT9KztAX0Qg8vZbaixOBw3yhXe70qea8KCSuogtA/exec",
-  perpanjangan_spk: "https://script.google.com/macros/s/AKfycbxm8ImgrbUIXE0FpigxzGdGqQ0pE_p5IkU70Im7xV8uLqgfwQ4OZ2JSeTdxl0-dFqKv/exec"
+  perpanjangan_spk: "https://script.google.com/macros/s/AKfycbyQRhiyX-zAyIyyHHU8OASCTj9O2tCSmnNesiX9o3q9ipQjKp5Qkx_LN6UmARtWMqJe/exec"
 };
 
 module.exports = (req, res) => {
