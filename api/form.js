@@ -57,7 +57,7 @@ module.exports = (req, res) => {
 
       if (req.method === "POST") {
         const postData = { ...req.body };
-        // delete postData.form;
+        delete postData.form;
 
         const response = await axios.post(GAS_URL, postData, {
           headers: { "Content-Type": "application/json" },
