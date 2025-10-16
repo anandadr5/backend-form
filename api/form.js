@@ -59,7 +59,7 @@ module.exports = (req, res) => {
         const postData = { ...req.body };
         delete postData.form;
 
-        const response = await axios.post(GAS_URL, postData, {
+        const response = await axios.post(GAS_URL, JSON.stringify(postData), { 
           headers: { "Content-Type": "application/json" },
         });
         return res.status(200).json(response.data);
