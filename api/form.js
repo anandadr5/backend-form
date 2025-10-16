@@ -1,7 +1,7 @@
 const axios = require("axios");
 const cors = require("cors")({
   origin: [
-    "https://pengawasan-building.vercel.app",
+    "https://frontend-form-virid.vercel.app",
     "https://script.google.com",
   ],
   methods: ["GET", "POST", "OPTIONS"],
@@ -31,6 +31,7 @@ const GAS_URLS = {
   h41: "https://script.google.com/macros/s/AKfycbwgIbxOWzUeVwMnzqUsrggqTivg-_mtUXEnNYVKs8aIRlmcJo4JZz5dPlXDYfn4Fbib/exec",
   serah_terima:
     "https://script.google.com/macros/s/AKfycbzYIuPoVoaD6HT7GjmGI2flSKzepirT9KztAX0Qg8vZbaixOBw3yhXe70qea8KCSuogtA/exec",
+  login_perpanjanganspk: "https://script.google.com/macros/s/AKfycbzacTiiH8pVGZlW2ybF9tlj5Pa0aWYoUOdcbm2tN8pQs16d084fL1CYt77e36aQL1aj/exec",
   perpanjangan_spk: "https://script.google.com/macros/s/AKfycbxm8ImgrbUIXE0FpigxzGdGqQ0pE_p5IkU70Im7xV8uLqgfwQ4OZ2JSeTdxl0-dFqKv/exec"
 };
 
