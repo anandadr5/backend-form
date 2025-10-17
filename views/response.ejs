@@ -5,24 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Respon Permintaan</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #4b5563; }
-        .card { background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 40px; text-align: center; max-width: 450px; width: 90%; }
-        .icon { font-size: 48px; line-height: 1; margin-bottom: 16px; }
-        h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #1f2937; }
-        p { font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
-        .footer { font-size: 12px; color: #9ca3af; margin-top: 30px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            flex-direction: column; /* To stack card and footer */
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 48px;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 0; /* Remove bottom margin to keep card tight */
+            color: #4b5563;
+        }
+        .footer {
+            font-size: 14px;
+            color: #888;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
     <% if (status === 'success') { %>
         <% if (type === 'approve') { %>
             <div class="card" style="border-top: 5px solid #28a745;">
+                <img src="https://logos-world.net/wp-content/uploads/2022/04/Alfamart-Emblem.png" alt="Logo Perusahaan" class="logo">
                 <div class="icon" style="color: #28a745;">✓</div>
                 <h1>Persetujuan Berhasil</h1>
                 <p>Anda telah menyetujui permintaan untuk Nomor Ulok <strong><%= ulok %></strong>. Notifikasi telah dikirimkan.</p>
             </div>
         <% } else { %>
             <div class="card" style="border-top: 5px solid #d9534f;">
+                <img src="https://logos-world.net/wp-content/uploads/2022/04/Alfamart-Emblem.png" alt="Logo Perusahaan" class="logo">
                 <div class="icon" style="color: #d9534f;">✗</div>
                 <h1>Penolakan Terkirim</h1>
                 <p>Anda telah menolak permintaan untuk Nomor Ulok <strong><%= ulok %></strong>. Notifikasi telah dikirimkan.</p>
@@ -30,6 +74,7 @@
         <% } %>
     <% } else { %>
         <div class="card" style="border-top: 5px solid #ffc107;">
+            <img src="https://logos-world.net/wp-content/uploads/2022/04/Alfamart-Emblem.png" alt="Logo Perusahaan" class="logo">
             <div class="icon" style="color: #ffc107;">⚠️</div>
             <h1>Gagal atau Sudah Diproses</h1>
             <p><%= msg || 'Permintaan ini mungkin sudah direspon sebelumnya atau terjadi kesalahan.' %></p>

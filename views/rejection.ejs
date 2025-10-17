@@ -1,18 +1,99 @@
 <!DOCTYPE html>
 <html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfirmasi Penolakan</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 480px;
+        }
+        .logo {
+            max-width: 180px;
+            margin-bottom: 25px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px 40px;
+            border-top: 5px solid #d9534f;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #4b5563;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+            font-size: 15px;
+            margin-bottom: 20px;
+            box-sizing: border-box; /* Important for padding */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        textarea:focus {
+            border-color: #ce1e10;
+            box-shadow: 0 0 0 3px rgba(206, 30, 16, 0.15);
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #ce1e10;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #b0190d;
+        }
+    </style>
+</head>
 <body>
-    <div class="card">
-        <h1>Konfirmasi Penolakan</h1>
-        <p>Silakan berikan alasan mengapa permintaan... <strong><%= ulok %></strong> ditolak.</p>
-        
-        <form action="/approval/submit-rejection" method="POST">
-            <input type="hidden" name="gas_url" value="<%= gas_url %>">
-            <input type="hidden" name="row" value="<%= row %>">
-            <input type="hidden" name="approver" value="<%= approver %>">
-            <input type="hidden" name="ulok" value="<%= ulok %>">
-            <textarea name="reason" placeholder="Tuliskan alasan penolakan di sini..." required></textarea>
-            <button type="submit">Kirim Penolakan</button>
-        </form>
+    <div class="container">
+        <img src="https://logos-world.net/wp-content/uploads/2022/04/Alfamart-Emblem.png" alt="Logo Perusahaan" class="logo">
+        <div class="card">
+            <h1>Konfirmasi Penolakan</h1>
+            <p>Silakan berikan alasan mengapa permintaan untuk Nomor Ulok <strong><%= ulok %></strong> ditolak.</p>
+            
+            <form action="/approval/submit-rejection" method="POST">
+                <input type="hidden" name="gas_url" value="<%= gas_url %>">
+                <input type="hidden" name="row" value="<%= row %>">
+                <input type="hidden" name="approver" value="<%= approver %>">
+                <input type="hidden" name="ulok" value="<%= ulok %>">
+                <textarea name="reason" placeholder="Tuliskan alasan penolakan di sini..." required></textarea>
+                <button type="submit">Kirim Penolakan</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
