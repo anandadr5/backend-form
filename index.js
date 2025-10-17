@@ -29,7 +29,11 @@ app.get("/approval/approve", async (req, res) => {
   try {
     const { gas_url, row, approver, ulok } = req.query;
 
-    await axios.get(`${gas_url}?action=processApproval&row=${row}&approver=${approver}`);
+    const approvalResponse = await axios.get(`${gas_url}?action=processApproval&row=${row}&approver=${approver}`);
+
+    if (approvalResponse.data.status !== 'success') {
+        return res.render("response", { status: 'error', msg: approvalResponse.data.message });
+    }
 
     const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
     const finalData = recipientDataResponse.data;
@@ -53,8 +57,12 @@ app.post("/approval/submit-rejection", async (req, res) => {
     try {
         const { gas_url, row, approver, ulok, reason } = req.body;
 
-        await axios.get(`${gas_url}?action=processRejection&row=${row}&approver=${approver}&reason=${encodeURIComponent(reason)}`);
-        
+        const rejectionResponse = await axios.get(`${gas_url}?action=processRejection&row=${row}&approver=${approver}&reason=${encodeURIComponent(reason)}`);
+
+        if (rejectionResponse.data.status !== 'success') {
+            return res.render("response", { status: 'error', msg: rejectionResponse.data.message });
+        }
+
         const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
         const finalData = recipientDataResponse.data;
 
