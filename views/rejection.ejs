@@ -18,7 +18,8 @@
         <h1>Konfirmasi Penolakan</h1>
         <p>Silakan berikan alasan mengapa permintaan perpanjangan SPK untuk <strong><%= ulok %></strong> ditolak.</p>
         <form action="<%= gas_url %>" method="GET">
-            <input type="hidden" name="action" value="reject">
+            <input type="hidden" name="action" value="submit_rejection"> 
+            
             <input type="hidden" name="row" value="<%= row %>">
             <input type="hidden" name="approver" value="<%= approver %>">
             <input type="hidden" name="ulok" value="<%= ulok %>">
