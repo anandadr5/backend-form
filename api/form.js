@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { PDFDocument, StandardFonts, rgb } = require("pdf-lib");
+const { PDFDocument } = require("pdf-lib");
 const cors = require("cors")({
   origin: [
     "https://frontend-form-virid.vercel.app",
@@ -43,68 +43,11 @@ module.exports = (req, res) => {
     const form = (req.query.form || req.body.form || "").toLowerCase();
     const GAS_URL = GAS_URLS[form];
 
-    const isStampAction = req.body && req.body.action === 'stamp_pdf';
-
     if (!GAS_URL) {
       return res.status(400).json({ error: "Invalid or missing form ID" });
     }
 
     try {
-      if (req.method === "POST") {
-        
-        if (isStampAction) {
-            try {
-                const pdfBase64 = req.body.pdfBase64;
-                const approverName = req.body.approverName || "Disetujui";
-                const approvalDate = req.body.approvalDate || "";
-
-                if (!pdfBase64) return res.status(400).json({ error: "No PDF data provided" });
-
-                const pdfDoc = await PDFDocument.load(pdfBase64);
-                const pages = pdfDoc.getPages();
-                const firstPage = pages[0]; 
-
-                const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-                const helveticaRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-                const xPos = 380;
-                const yPos = 130; 
-
-                firstPage.drawText(`( ${approverName} )`, {
-                    x: xPos, 
-                    y: yPos,
-                    size: 11,
-                    font: helveticaFont,
-                    color: rgb(0, 0, 0),
-                });
-
-                firstPage.drawText(`Disetujui pada: ${approvalDate}`, {
-                    x: xPos,
-                    y: yPos + 15, 
-                    size: 9,
-                    font: helveticaRegular,
-                    color: rgb(0, 0, 0),
-                });
-
-                const stampedPdfBase64 = await pdfDoc.saveAsBase64();
-                
-                return res.status(200).json({ status: 'success', pdfBase64: stampedPdfBase64 });
-
-            } catch (err) {
-                console.error("Gagal Stamp PDF:", err);
-                return res.status(500).json({ error: "Gagal memproses tanda tangan PDF: " + err.message });
-            }
-        }
-
-        const postData = { ...req.body };
-        delete postData.form;
-
-        const response = await axios.post(GAS_URL, postData, {
-          headers: { "Content-Type": "application/json" },
-        });
-        return res.status(200).json(response.data);
-      }
-
       if (req.method === "GET") {
         const url = new URL(GAS_URL);
         Object.entries(req.query).forEach(([key, value]) => {
@@ -114,17 +57,63 @@ module.exports = (req, res) => {
         return res.status(200).json(response.data);
       }
 
-      return res.status(405).json({ error: "Method Not Allowed" });
+      if (req.method === "POST") {
+        let postData = { ...req.body };
+        delete postData.form;
 
+        // LOGIKA PENGGABUNGAN PDF (KHUSUS PERPANJANGAN SPK)
+        if (form === "perpanjangan_spk" && postData.lampiran_pdf) {
+          try {
+            // 1. Minta GAS membuat halaman pertama (Preview Sistem)
+            const previewPayload = { ...postData, action: "preview_pdf" };
+            const previewResponse = await axios.post(GAS_URL, previewPayload, {
+              headers: { "Content-Type": "application/json" },
+            });
+
+            if (previewResponse.data.status === "success" && previewResponse.data.pdfBase64) {
+              // 2. Load PDF Halaman 1 (Dari Sistem)
+              const systemPdfDoc = await PDFDocument.load(previewResponse.data.pdfBase64);
+              
+              // 3. Load PDF Lampiran (Dari User)
+              const attachmentPdfDoc = await PDFDocument.load(postData.lampiran_pdf);
+
+              // 4. Gabungkan: Copy semua halaman lampiran ke dokumen sistem
+              const attachmentPages = await systemPdfDoc.copyPages(
+                attachmentPdfDoc,
+                attachmentPdfDoc.getPageIndices()
+              );
+              attachmentPages.forEach((page) => systemPdfDoc.addPage(page));
+
+              // 5. Simpan hasil gabungan sebagai Base64
+              const mergedPdfBase64 = await systemPdfDoc.saveAsBase64();
+
+              // 6. Update payload: Hapus lampiran raw, ganti dengan final merged pdf
+              delete postData.lampiran_pdf; 
+              postData.final_pdf_base64 = mergedPdfBase64;
+            } else {
+              console.warn("Gagal mendapatkan preview PDF dari GAS, melanjutkan tanpa merge.");
+            }
+          } catch (mergeError) {
+            console.error("Error merging PDF:", mergeError);
+            return res.status(500).json({ error: "Gagal menggabungkan PDF Lampiran: " + mergeError.message });
+          }
+        }
+
+        // Kirim data final (atau data asli jika tidak ada lampiran) ke GAS
+        const response = await axios.post(GAS_URL, postData, {
+          headers: { "Content-Type": "application/json" },
+        });
+        return res.status(200).json(response.data);
+      }
+
+      return res.status(405).json({ error: "Method Not Allowed" });
     } catch (error) {
       console.error("GAS Proxy error:", {
         message: error.message,
         response: error.response?.data,
         status: error.response?.status,
       });
-      return res
-        .status(500)
-        .json({ error: "Gagal mengakses Google Apps Script" });
+      return res.status(500).json({ error: "Gagal mengakses Google Apps Script" });
     }
   });
 };
