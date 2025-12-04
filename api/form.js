@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { PDFDocument } = require("pdf-lib");
 const cors = require("cors")({
   origin: [
     "https://frontend-form-virid.vercel.app",
@@ -58,48 +57,9 @@ module.exports = (req, res) => {
       }
 
       if (req.method === "POST") {
-        let postData = { ...req.body };
+        const postData = { ...req.body };
         delete postData.form;
 
-        // LOGIKA PENGGABUNGAN PDF (KHUSUS PERPANJANGAN SPK)
-        if (form === "perpanjangan_spk" && postData.lampiran_pdf) {
-          try {
-            // 1. Minta GAS membuat halaman pertama (Preview Sistem)
-            const previewPayload = { ...postData, action: "preview_pdf" };
-            const previewResponse = await axios.post(GAS_URL, previewPayload, {
-              headers: { "Content-Type": "application/json" },
-            });
-
-            if (previewResponse.data.status === "success" && previewResponse.data.pdfBase64) {
-              // 2. Load PDF Halaman 1 (Dari Sistem)
-              const systemPdfDoc = await PDFDocument.load(previewResponse.data.pdfBase64);
-              
-              // 3. Load PDF Lampiran (Dari User)
-              const attachmentPdfDoc = await PDFDocument.load(postData.lampiran_pdf);
-
-              // 4. Gabungkan: Copy semua halaman lampiran ke dokumen sistem
-              const attachmentPages = await systemPdfDoc.copyPages(
-                attachmentPdfDoc,
-                attachmentPdfDoc.getPageIndices()
-              );
-              attachmentPages.forEach((page) => systemPdfDoc.addPage(page));
-
-              // 5. Simpan hasil gabungan sebagai Base64
-              const mergedPdfBase64 = await systemPdfDoc.saveAsBase64();
-
-              // 6. Update payload: Hapus lampiran raw, ganti dengan final merged pdf
-              delete postData.lampiran_pdf; 
-              postData.final_pdf_base64 = mergedPdfBase64;
-            } else {
-              console.warn("Gagal mendapatkan preview PDF dari GAS, melanjutkan tanpa merge.");
-            }
-          } catch (mergeError) {
-            console.error("Error merging PDF:", mergeError);
-            return res.status(500).json({ error: "Gagal menggabungkan PDF Lampiran: " + mergeError.message });
-          }
-        }
-
-        // Kirim data final (atau data asli jika tidak ada lampiran) ke GAS
         const response = await axios.post(GAS_URL, postData, {
           headers: { "Content-Type": "application/json" },
         });
@@ -113,7 +73,9 @@ module.exports = (req, res) => {
         response: error.response?.data,
         status: error.response?.status,
       });
-      return res.status(500).json({ error: "Gagal mengakses Google Apps Script" });
+      return res
+        .status(500)
+        .json({ error: "Gagal mengakses Google Apps Script" });
     }
   });
 };

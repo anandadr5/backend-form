@@ -23,8 +23,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/api/form", require("./api/form.js"));
 app.use("/api/send-email", require("./api/send-email.js"));
 
-app.use("/api/approval", require("./api/approval.js"));
-
 app.get("/", (req, res) => res.send("Backend server is running correctly."));
 
 app.get("/approval/approve", async (req, res) => {
