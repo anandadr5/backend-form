@@ -1,4 +1,10 @@
 const axios = require("axios");
+const { PDFDocument } = require("pdf-lib");
+const { google } = require("googleapis");
+
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const KEYFILEPATH = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON || '{}');
+
 const cors = require("cors")({
   origin: [
     "https://frontend-form-virid.vercel.app",
@@ -35,6 +41,41 @@ const GAS_URLS = {
   login_perpanjanganspk: "https://script.google.com/macros/s/AKfycbyQRhiyX-zAyIyyHHU8OASCTj9O2tCSmnNesiX9o3q9ipQjKp5Qkx_LN6UmARtWMqJe/exec"
 };
 
+async function mergePdfWithDrive(systemPdfId, userPdfBase64) {
+    try {
+        const auth = new google.auth.GoogleAuth({
+            credentials: KEYFILEPATH,
+            scopes: SCOPES,
+        });
+        const drive = google.drive({ version: 'v3', auth });
+
+        const systemPdfRes = await drive.files.get({
+            fileId: systemPdfId,
+            alt: 'media',
+        }, { responseType: 'arraybuffer' });
+
+        const systemPdfDoc = await PDFDocument.load(systemPdfRes.data);
+        const userPdfDoc = await PDFDocument.load(Buffer.from(userPdfBase64, 'base64'));
+
+        const userPages = await systemPdfDoc.copyPages(userPdfDoc, userPdfDoc.getPageIndices());
+        userPages.forEach((page) => systemPdfDoc.addPage(page));
+
+        const mergedPdfBytes = await systemPdfDoc.save();
+
+        await drive.files.update({
+            fileId: systemPdfId,
+            media: {
+                mimeType: 'application/pdf',
+                body: Buffer.from(mergedPdfBytes),
+            },
+        });
+
+        console.log(`Berhasil menggabungkan PDF untuk ID: ${systemPdfId}`);
+    } catch (error) {
+        console.error("Gagal menggabungkan PDF:", error);
+    }
+}
+
 module.exports = (req, res) => {
   cors(req, res, async () => {
     if (req.method === "OPTIONS") return res.status(200).end();
@@ -58,11 +99,23 @@ module.exports = (req, res) => {
 
       if (req.method === "POST") {
         const postData = { ...req.body };
+        const userPdfBase64 = postData.lampiran_pdf; 
+        
+        delete postData.lampiran_pdf; 
         delete postData.form;
 
         const response = await axios.post(GAS_URL, postData, {
           headers: { "Content-Type": "application/json" },
         });
+
+        if (
+            form === 'perpanjangan_spk' && 
+            response.data.status === 'success' && 
+            response.data.pdfId && 
+            userPdfBase64
+        ) {
+            await mergePdfWithDrive(response.data.pdfId, userPdfBase64);
+        }
         return res.status(200).json(response.data);
       }
 
