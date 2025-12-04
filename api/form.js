@@ -1,6 +1,5 @@
 const axios = require("axios");
-const { PDFDocument } = require("pdf-lib");
-
+const { PDFDocument, StandardFonts, rgb } = require("pdf-lib");
 const cors = require("cors")({
   origin: [
     "https://frontend-form-virid.vercel.app",
@@ -44,11 +43,68 @@ module.exports = (req, res) => {
     const form = (req.query.form || req.body.form || "").toLowerCase();
     const GAS_URL = GAS_URLS[form];
 
+    const isStampAction = req.body && req.body.action === 'stamp_pdf';
+
     if (!GAS_URL) {
       return res.status(400).json({ error: "Invalid or missing form ID" });
     }
 
     try {
+      if (req.method === "POST") {
+        
+        if (isStampAction) {
+            try {
+                const pdfBase64 = req.body.pdfBase64;
+                const approverName = req.body.approverName || "Disetujui";
+                const approvalDate = req.body.approvalDate || "";
+
+                if (!pdfBase64) return res.status(400).json({ error: "No PDF data provided" });
+
+                const pdfDoc = await PDFDocument.load(pdfBase64);
+                const pages = pdfDoc.getPages();
+                const firstPage = pages[0]; 
+
+                const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                const helveticaRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+                const xPos = 380;
+                const yPos = 130; 
+
+                firstPage.drawText(`( ${approverName} )`, {
+                    x: xPos, 
+                    y: yPos,
+                    size: 11,
+                    font: helveticaFont,
+                    color: rgb(0, 0, 0),
+                });
+
+                firstPage.drawText(`Disetujui pada: ${approvalDate}`, {
+                    x: xPos,
+                    y: yPos + 15, 
+                    size: 9,
+                    font: helveticaRegular,
+                    color: rgb(0, 0, 0),
+                });
+
+                const stampedPdfBase64 = await pdfDoc.saveAsBase64();
+                
+                return res.status(200).json({ status: 'success', pdfBase64: stampedPdfBase64 });
+
+            } catch (err) {
+                console.error("Gagal Stamp PDF:", err);
+                return res.status(500).json({ error: "Gagal memproses tanda tangan PDF: " + err.message });
+            }
+        }
+
+        const postData = { ...req.body };
+        delete postData.form;
+
+        const response = await axios.post(GAS_URL, postData, {
+          headers: { "Content-Type": "application/json" },
+        });
+        return res.status(200).json(response.data);
+      }
+
       if (req.method === "GET") {
         const url = new URL(GAS_URL);
         Object.entries(req.query).forEach(([key, value]) => {
@@ -58,96 +114,8 @@ module.exports = (req, res) => {
         return res.status(200).json(response.data);
       }
 
-      if (req.method === "POST") {
-        let postData = { ...req.body };
-
-        if (postData.action === 'stamp_pdf') {
-            try {
-                const pdfBase64 = postData.pdfBase64;
-                const approverName = postData.approverName || "Disetujui";
-                const approvalDate = postData.approvalDate || "";
-
-                const pdfDoc = await PDFDocument.load(pdfBase64);
-                const pages = pdfDoc.getPages();
-                const firstPage = pages[0]; 
-
-                const helveticaFont = await pdfDoc.embedFont(require("pdf-lib").StandardFonts.HelveticaBold);
-                const helveticaRegular = await pdfDoc.embedFont(require("pdf-lib").StandardFonts.Helvetica);
-
-                const xPos = 400; 
-                const yPos = 135; 
-
-                firstPage.drawText(`( ${approverName} )`, {
-                    x: xPos - 20, 
-                    y: yPos,
-                    size: 11,
-                    font: helveticaFont,
-                    color: require("pdf-lib").rgb(0, 0, 0),
-                });
-
-                firstPage.drawText(`Disetujui pada: ${approvalDate}`, {
-                    x: xPos - 30,
-                    y: yPos + 15,
-                    size: 9,
-                    font: helveticaRegular,
-                    color: require("pdf-lib").rgb(0, 0, 0),
-                });
-
-                const stampedPdfBase64 = await pdfDoc.saveAsBase64();
-                
-                return res.status(200).json({ status: 'success', pdfBase64: stampedPdfBase64 });
-
-            } catch (err) {
-                console.error("Gagal Stamp PDF:", err);
-                return res.status(500).json({ error: "Gagal memproses tanda tangan PDF" });
-            }
-        }
-
-        const userPdfBase64 = postData.lampiran_pdf;
-        delete postData.lampiran_pdf;
-        delete postData.form;
-
-        if (form === 'perpanjangan_spk' && userPdfBase64) {
-            try {
-                console.log("Memulai proses merge PDF...");
-                
-                const previewResponse = await axios.post(GAS_URL, {
-                    ...postData,
-                    action: 'preview_pdf'
-                }, { headers: { "Content-Type": "application/json" } });
-
-                if (previewResponse.data.status === 'success' && previewResponse.data.pdfBase64) {
-                    const systemPdfBase64 = previewResponse.data.pdfBase64;
-
-                    const mergedPdfDoc = await PDFDocument.create();
-                    
-                    const systemPdf = await PDFDocument.load(systemPdfBase64);
-                    const systemPages = await mergedPdfDoc.copyPages(systemPdf, systemPdf.getPageIndices());
-                    systemPages.forEach((page) => mergedPdfDoc.addPage(page));
-
-                    const uploadedPdf = await PDFDocument.load(userPdfBase64);
-                    const uploadedPages = await mergedPdfDoc.copyPages(uploadedPdf, uploadedPdf.getPageIndices());
-                    uploadedPages.forEach((page) => mergedPdfDoc.addPage(page));
-
-                    const mergedPdfBase64 = await mergedPdfDoc.saveAsBase64();
-                    
-                    console.log("Merge berhasil. Mengirim final PDF ke GAS...");
-
-                    postData.final_pdf_base64 = mergedPdfBase64;
-                }
-            } catch (mergeError) {
-                console.error("Gagal menggabungkan PDF:", mergeError);
-            }
-        }
-
-        const response = await axios.post(GAS_URL, postData, {
-          headers: { "Content-Type": "application/json" },
-        });
-
-        return res.status(200).json(response.data);
-      }
-
       return res.status(405).json({ error: "Method Not Allowed" });
+
     } catch (error) {
       console.error("GAS Proxy error:", {
         message: error.message,
