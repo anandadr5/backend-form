@@ -60,7 +60,49 @@ module.exports = (req, res) => {
 
       if (req.method === "POST") {
         let postData = { ...req.body };
-        
+
+        if (postData.action === 'stamp_pdf') {
+            try {
+                const pdfBase64 = postData.pdfBase64;
+                const approverName = postData.approverName || "Disetujui";
+                const approvalDate = postData.approvalDate || "";
+
+                const pdfDoc = await PDFDocument.load(pdfBase64);
+                const pages = pdfDoc.getPages();
+                const firstPage = pages[0]; 
+
+                const helveticaFont = await pdfDoc.embedFont(require("pdf-lib").StandardFonts.HelveticaBold);
+                const helveticaRegular = await pdfDoc.embedFont(require("pdf-lib").StandardFonts.Helvetica);
+
+                const xPos = 400; 
+                const yPos = 135; 
+
+                firstPage.drawText(`( ${approverName} )`, {
+                    x: xPos - 20, 
+                    y: yPos,
+                    size: 11,
+                    font: helveticaFont,
+                    color: require("pdf-lib").rgb(0, 0, 0),
+                });
+
+                firstPage.drawText(`Disetujui pada: ${approvalDate}`, {
+                    x: xPos - 30,
+                    y: yPos + 15,
+                    size: 9,
+                    font: helveticaRegular,
+                    color: require("pdf-lib").rgb(0, 0, 0),
+                });
+
+                const stampedPdfBase64 = await pdfDoc.saveAsBase64();
+                
+                return res.status(200).json({ status: 'success', pdfBase64: stampedPdfBase64 });
+
+            } catch (err) {
+                console.error("Gagal Stamp PDF:", err);
+                return res.status(500).json({ error: "Gagal memproses tanda tangan PDF" });
+            }
+        }
+
         const userPdfBase64 = postData.lampiran_pdf;
         delete postData.lampiran_pdf;
         delete postData.form;
