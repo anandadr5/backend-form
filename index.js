@@ -25,21 +25,32 @@ app.use("/api/send-email", require("./api/send-email.js"));
 
 app.get("/", (req, res) => res.send("Backend server is running correctly."));
 
+// --- RUTE APPROVAL (Disetujui) ---
 app.get("/approval/approve", async (req, res) => {
   try {
     const { gas_url, row, approver, ulok } = req.query;
 
+    // 1. Panggil GAS untuk memproses data (Update Sheet & Rename PDF)
     const approvalResponse = await axios.get(`${gas_url}?action=processApproval&row=${row}&approver=${approver}`);
 
     if (approvalResponse.data.status !== 'success') {
-        return res.render("response", { status: 'error', msg: approvalResponse.data.message });
+      return res.render("response", { status: 'error', msg: approvalResponse.data.message });
     }
 
+    // 2. Ambil Data Penerima Terbaru (Termasuk Regional) dari GAS
+    // Fungsi getRecipientInfo di GAS yang baru sudah mengembalikan array recipients
     const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
     const finalData = recipientDataResponse.data;
 
-    await sendEmail("perpanjangan_spk_notification", { ...finalData, status: 'disetujui' });
+    // 3. [BARU] Kirim Email Notifikasi "DISETUJUI" ke Semua Pihak
+    // Ini akan mengirim ke array recipients yang didapat dari GAS
+    await sendEmail("perpanjangan_spk_notification", {
+      ...finalData,
+      status_persetujuan: 'DISETUJUI',
+      disetujui_oleh: approver
+    });
 
+    // 4. Tampilkan Halaman Sukses
     res.render("response", { status: 'success', type: 'approve', ulok });
 
   } catch (error) {
@@ -49,33 +60,31 @@ app.get("/approval/approve", async (req, res) => {
 });
 
 app.get("/approval/reject", (req, res) => {
-    const { gas_url, row, approver, ulok } = req.query;
-    res.render("rejection", { gas_url, row, approver, ulok });
+  const { gas_url, row, approver, ulok } = req.query;
+  res.render("rejection", { gas_url, row, approver, ulok });
 });
 
 app.post("/approval/submit-rejection", async (req, res) => {
-    try {
-        const { gas_url, row, approver, ulok, reason } = req.body;
+  try {
+    const { gas_url, row, approver, ulok, reason } = req.body;
 
-        const rejectionResponse = await axios.get(`${gas_url}?action=processRejection&row=${row}&approver=${approver}&reason=${encodeURIComponent(reason)}`);
+    const rejectionResponse = await axios.get(`${gas_url}?action=processRejection&row=${row}&approver=${approver}&reason=${encodeURIComponent(reason)}`);
 
-        if (rejectionResponse.data.status !== 'success') {
-            return res.render("response", { status: 'error', msg: rejectionResponse.data.message });
-        }
-
-        const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
-        const finalData = recipientDataResponse.data;
-
-        await sendEmail("perpanjangan_spk_notification", { ...finalData, status: 'ditolak' });
-
-        res.render("response", { status: 'success', type: 'reject', ulok });
-
-    } catch (error) {
-        console.error("Error processing rejection:", error.message);
-        res.render("response", { status: 'error', msg: 'Gagal memproses penolakan.' });
+    if (rejectionResponse.data.status !== 'success') {
+      return res.render("response", { status: 'error', msg: rejectionResponse.data.message });
     }
+
+    const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
+    const finalData = recipientDataResponse.data;
+
+    await sendEmail("perpanjangan_spk_notification", { ...finalData, status_persetujuan: 'DITOLAK' });
+
+    res.render("response", { status: 'success', type: 'reject', ulok });
+
+  } catch (error) {
+    console.error("Error processing rejection:", error.message);
+    res.render("response", { status: 'error', msg: 'Gagal memproses penolakan.' });
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
