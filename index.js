@@ -25,32 +25,21 @@ app.use("/api/send-email", require("./api/send-email.js"));
 
 app.get("/", (req, res) => res.send("Backend server is running correctly."));
 
-// --- RUTE APPROVAL (Disetujui) ---
 app.get("/approval/approve", async (req, res) => {
   try {
     const { gas_url, row, approver, ulok } = req.query;
 
-    // 1. Panggil GAS untuk memproses data (Update Sheet & Rename PDF)
     const approvalResponse = await axios.get(`${gas_url}?action=processApproval&row=${row}&approver=${approver}`);
 
     if (approvalResponse.data.status !== 'success') {
       return res.render("response", { status: 'error', msg: approvalResponse.data.message });
     }
 
-    // 2. Ambil Data Penerima Terbaru (Termasuk Regional) dari GAS
-    // Fungsi getRecipientInfo di GAS yang baru sudah mengembalikan array recipients
     const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
     const finalData = recipientDataResponse.data;
 
-    // 3. [BARU] Kirim Email Notifikasi "DISETUJUI" ke Semua Pihak
-    // Ini akan mengirim ke array recipients yang didapat dari GAS
-    await sendEmail("perpanjangan_spk_notification", {
-      ...finalData,
-      status_persetujuan: 'DISETUJUI',
-      disetujui_oleh: approver
-    });
+    await sendEmail("perpanjangan_spk_notification", { ...finalData, status: 'disetujui' });
 
-    // 4. Tampilkan Halaman Sukses
     res.render("response", { status: 'success', type: 'approve', ulok });
 
   } catch (error) {
@@ -77,7 +66,7 @@ app.post("/approval/submit-rejection", async (req, res) => {
     const recipientDataResponse = await axios.get(`${gas_url}?action=getRecipientInfo&row=${row}`);
     const finalData = recipientDataResponse.data;
 
-    await sendEmail("perpanjangan_spk_notification", { ...finalData, status_persetujuan: 'DITOLAK' });
+    await sendEmail("perpanjangan_spk_notification", { ...finalData, status: 'ditolak' });
 
     res.render("response", { status: 'success', type: 'reject', ulok });
 
@@ -87,4 +76,6 @@ app.post("/approval/submit-rejection", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
