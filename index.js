@@ -12,7 +12,7 @@ app.use(express.json({ limit: "45mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["https://frontend-form-virid.vercel.app", "https://script.google.com"],
+    origin: ["https://frontend-form-virid.vercel.app", "https://script.google.com", "https://sparta-alfamart.vercel.app"],
     methods: ["GET", "POST", "OPTIONS"],
   })
 );
