@@ -2,6 +2,7 @@ const axios = require("axios");
 const cors = require("cors")({
   origin: [
     "https://frontend-form-virid.vercel.app",
+    "https://sparta-alfamart.vercel.app",
     "https://script.google.com",
   ],
   methods: ["GET", "POST", "OPTIONS"],
