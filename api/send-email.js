@@ -31,9 +31,14 @@ module.exports = async function handler(req, res) {
 
     if (result.success) {
       return res.status(200).json(result);
-    } else {
-      return res.status(500).json(result);
     }
+
+    const statusByCode = {
+      GMAIL_ENV_MISSING: 500,
+      GMAIL_AUTH_INVALID_GRANT: 401,
+    };
+
+    return res.status(statusByCode[result.code] || 500).json(result);
   } catch (error) {
     console.error("Error in send-email API:", error);
     return res.status(500).json({
